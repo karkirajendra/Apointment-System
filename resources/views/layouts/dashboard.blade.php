@@ -35,6 +35,12 @@
 					elseif (Request::is('admin/history')) {
 						$title .= "History";
 					}
+					elseif (Request::is('admin/reports*')) {
+						$title .= "Reports";
+					}
+					elseif (Request::is('admin/notifications*')) {
+						$title .= "Notifications";
+					}
 					elseif (Request::is('admin/employees')) {
 						$title .= "Employees";
 					}
@@ -83,6 +89,9 @@
 					<li class="{{ Request::is('admin/bookings/*') ? 'active' : null }}"><a title="Show a bookings" href="/admin/bookings/{{ Time::now('Australia/Melbourne')->format('m-Y') }}">Bookings</a></li>
 					<li class="{{ Request::is('admin/summary') ? 'active' : null }}"><a title="Show a summary of bookings" href="/admin/summary">Summary</a></li>
 					<li class="{{ Request::is('admin/history') ? 'active' : null }}"><a title="Show a history of bookings" href="/admin/history">History</a></li>
+					<li class="{{ Request::is('admin/patients*') ? 'active' : null }}"><a title="Manage patients" href="/admin/patients">Patients</a></li>
+					<li class="{{ Request::is('admin/reports*') ? 'active' : null }}"><a title="Reporting & Analytics" href="/admin/reports">Reports</a></li>
+					<li class="{{ Request::is('admin/notifications*') ? 'active' : null }}"><a title="Appointment notifications" href="/admin/notifications">Notifications</a></li>
 				</ul>
 				<footer class="dashboard">LCJJ Development Team</footer>
 			</div>

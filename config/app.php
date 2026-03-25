@@ -160,7 +160,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
     ],
 
     /*
@@ -216,8 +215,6 @@ return [
         'Employee' => App\Employee::class,
         'WorkingTime' => App\WorkingTime::class,
         'BusinessTime' => App\BusinessTime::class,
-        'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,
     ],
 
 ];

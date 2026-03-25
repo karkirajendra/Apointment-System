@@ -16,15 +16,30 @@
 
 <body>
 	<div class="container">
-		@if (Auth::check())
+		@php
+			$customer = Auth::guard('web_user')->user();
+			$admin = Auth::guard('web_admin')->user();
+			$employee = Auth::guard('web_employee')->user();
+			$isLoggedIn = $customer || $admin || $employee;
+			$loggedInUsername = $customer?->username ?? $admin?->username ?? $employee?->username;
+		@endphp
+
+		@if ($isLoggedIn)
 			<ul class="nav nav-pills pull-left">
-				@if (Auth::check())
+				@if ($customer)
 					<li role="presentation" class="{{ Request::is('bookings') ? 'active' : null }}"><a href="/bookings">Bookings</a></li>
 					<li role="presentation" class="{{ Request::is('bookings/*') ? 'active' : null }}"><a href="/bookings/{{ toMonthYear(getNow()) }}/new">Create Booking</a></li>
+					<li role="presentation" class="{{ Request::is('my-notifications') ? 'active' : null }}"><a href="/my-notifications">Notifications</a></li>
+				@endif
+				@if ($admin)
+					<li role="presentation" class="{{ Request::is('admin') ? 'active' : null }}"><a href="/admin">Admin</a></li>
+				@endif
+				@if ($employee)
+					<li role="presentation" class="{{ Request::is('doctor*') || Request::is('staff*') ? 'active' : null }}"><a href="{{ $employee?->role?->name === 'doctor' ? '/doctor' : '/staff' }}">Dashboard</a></li>
 				@endif
 			</ul>
 			<div class="pull-right user">
-				Logged in as {{ Auth::user()->username }}
+				Logged in as {{ $loggedInUsername }}
 				<a href="/logout">Logout</a>
 			</div>
 		@endif

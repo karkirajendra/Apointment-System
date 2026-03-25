@@ -28,4 +28,9 @@
 	</div>
 	<hr>
 	<a class="btn btn-lg btn-primary btn-block" href="/register">Register</a>
+
+	<div class="margin-top-two">
+		<hr>
+		<a class="btn btn-lg btn-primary btn-block" href="/register/doctor-staff">Doctor / Staff Registration</a>
+	</div>
 @endsection

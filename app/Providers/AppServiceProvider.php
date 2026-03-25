@@ -6,6 +6,9 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 
 use App\Activity;
 use App\Booking;
@@ -25,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
     {
 		// Additional code to fix php artisan migrate error for (unique key too long on certain systems)
         Schema::defaultStringLength(191);
+
+        // Required because `app/Http/Kernel.php` uses `ThrottleRequests::class.':api'` for the `api` middleware group.
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
 
         // Validator that checks if value is a day of the week
         Validator::extend('is_day_of_week', function ($attribute, $value, $parameters, $validator) {

@@ -5,12 +5,24 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Auth\Authenticatable as AuthenticableTrait;
 
 use Carbon\Carbon as Time;
 
-class Employee extends Model
+class Employee extends Model implements Authenticatable
 {
 	protected $guarded = [];
+
+	use AuthenticableTrait;
+
+	/**
+	 * Role assigned to the employee (doctor/staff).
+	 */
+	public function role()
+	{
+		return $this->belongsTo(Role::class, 'role_id');
+	}
 
 	/**
 	 * Get the available times of an employee at a given date

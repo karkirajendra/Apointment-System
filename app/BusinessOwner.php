@@ -12,4 +12,12 @@ class BusinessOwner extends Model implements Authenticatable
     use AuthenticableTrait;
 
 	protected $guarded = [];
+
+    /**
+     * Role assigned to the business owner (admin).
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
 }

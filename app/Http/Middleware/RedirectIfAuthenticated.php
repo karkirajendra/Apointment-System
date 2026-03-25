@@ -38,6 +38,10 @@ class RedirectIfAuthenticated
                     }
 
                     break;
+                case 'web_employee':
+                    // Doctors/staff dashboard (role-based route will handle role mismatch).
+                    $redirectURL = '/dashboard';
+                    break;
                 
                 default:
                     // All else fails, redirect to login

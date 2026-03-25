@@ -14,6 +14,14 @@ class Booking extends Model
 	protected $guarded = [];
 
 	/**
+	 * Notifications related to this appointment.
+	 */
+	public function notifications()
+	{
+		return $this->hasMany(AppointmentNotification::class, 'booking_id');
+	}
+
+	/**
 	 * Calculate end time of a booking given its activity duration
 	 *
 	 * @return string

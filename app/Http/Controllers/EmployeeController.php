@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,12 +15,16 @@ use App\BusinessOwner;
 use App\Customer;
 use App\Employee;
 use App\WorkingTime;
+use App\Http\Requests\EmployeeCreateRequest;
+use App\Services\Auth\EmployeeCreationService;
 
 use Carbon\Carbon as Time;
 
 class EmployeeController extends Controller
 {
-    public function __construct() {
+    public function __construct(
+        private readonly EmployeeCreationService $employeeCreationService
+    ) {
         // Check auth, if not auth then redirect to login
         $this->middleware('auth:web_admin', [
             'only' => [
@@ -33,25 +36,12 @@ class EmployeeController extends Controller
     }
 
     // Create a new employee
-    public function store(Request $request)
+    public function store(EmployeeCreateRequest $request)
     {
         Log::info("An attempt was made to create a new employee", $request->all());
 
-    	// Validate form
-        $this->validate($request, [
-            'firstname' => 'required|min:2|max:32|regex:/^[A-z\-\.' . "\'" . ' ]+$/',
-            'lastname' => 'required|min:2|max:32|regex:/^[A-z\-\.' . "\'" . ' ]+$/',
-            'title' => 'required|min:2|max:32|regex:/^[A-z\-\.' . "\'" . ' ]+$/',
-            'phone' => 'required|min:10|max:24|regex:/^[0-9\-\+\.\s\(\)x]+$/',
-        ]);
-
-        // Create employee
-        $employee = Employee::create([
-            'firstname' => $request->firstname,
-            'lastname' => $request->lastname,
-            'title' => $request->title,
-            'phone' => $request->phone,
-        ]);
+        // Create employee (default role is `staff` for compatibility)
+        $employee = $this->employeeCreationService->createStaff($request->validated());
 
         Log::notice("Employee was created with name: " . $request->firstname . " " . $request->lastname, $employee->toArray());
 

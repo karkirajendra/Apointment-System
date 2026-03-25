@@ -24,6 +24,7 @@ class SessionController extends Controller
     public function __construct() {
         $this->middleware('guest:web_user', ['except' => 'logout']);
         $this->middleware('guest:web_admin', ['except' => 'logout']);
+        $this->middleware('guest:web_employee', ['except' => 'logout']);
     }
 
     public function index()
@@ -56,6 +57,26 @@ class SessionController extends Controller
             return redirect('/admin');
         }
 
+        // If sign in as a business owner doesn't work, attempt employee sign in
+        elseif (Auth::guard('web_employee')->attempt(request(['username', 'password']))) {
+            Log::info("Employee Login with username " . request('username') . " was successful");
+
+            session()->flash('message', 'Login success.');
+
+            // Redirect based on role
+            $employee = Auth::guard('web_employee')->user();
+            $role = optional($employee?->role)->name;
+
+            if ($role === 'doctor') {
+                return redirect('/doctor');
+            }
+            if ($role === 'staff') {
+                return redirect('/staff');
+            }
+
+            return redirect('/dashboard');
+        }
+
         //Login failed (handle failed login)
         Log::notice("An attempt to login failed with username and password: " . request('username') . ", " . request('password'));
 
@@ -77,6 +98,11 @@ class SessionController extends Controller
         elseif (Auth::guard('web_admin')->check())
         {
             Auth::guard('web_admin')->logout();
+        }
+        // If logged in as an employee, log out from employee guard
+        elseif (Auth::guard('web_employee')->check())
+        {
+            Auth::guard('web_employee')->logout();
         }
         else {
             //If the user has a non-default guard or they weren't logged in

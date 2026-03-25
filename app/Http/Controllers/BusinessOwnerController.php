@@ -18,12 +18,16 @@ use App\BusinessOwner;
 use App\Customer;
 use App\Employee;
 use App\WorkingTime;
+use App\Http\Requests\BusinessOwnerRegisterRequest;
+use App\Services\Auth\BusinessOwnerRegistrationService;
 
 use Carbon\Carbon as Time;
 
 class BusinessOwnerController extends Controller
 {
-    public function __construct() {
+    public function __construct(
+        private readonly BusinessOwnerRegistrationService $registrationService
+    ) {
         // Business Owner auth
         $this->middleware('auth:web_admin', [
             'only' => [
@@ -96,31 +100,16 @@ class BusinessOwnerController extends Controller
      * Creates Business Owner
      * Includes all business information
      */
-    public function store(Request $request)
+    public function store(BusinessOwnerRegisterRequest $request)
     {
         //Check a business owner doesn't already exist
         if (count(BusinessOwner::all()) > 1) {
             //Log a critical failure if an attempt is made to register more than 1 business
             Log::critical("More than one business was attempted to be registered", $request->all());
-            return 0;
+            return redirect('/admin');
         }
 
-    	// Validate form
-        $this->validate($request, $this->rules, $this->messages, $this->attributes);
-
-    	// Create customer
-        $businessOwner = BusinessOwner::create([
-            'business_name' => $request->business_name,
-            'firstname' => ucfirst($request->firstname),
-            'lastname' => ucfirst($request->lastname),
-            'username' => $request->username,
-            'password' => bcrypt($request->password),
-            'address' => $request->address,
-            'phone' => $request->phone,
-        ]);
-
-        //Set the temporary password to used
-        DB::update('update temp_password set used = 1 where password= ?', [$request->temp_password]);
+        $businessOwner = $this->registrationService->register($request->validated());
 
         // Log business owner creation
         Log::notice("Business Owner was registered with username " . $businessOwner->username, $businessOwner->toArray());
