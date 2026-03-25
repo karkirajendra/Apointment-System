@@ -135,7 +135,7 @@ class BookingController extends Controller
         }
         else {
             // Else get all working times
-            $workingTimes = WorkingTime::all();
+            $workingTimes = WorkingTime::query();
         }
 
         $workingTimes = $workingTimes->where('date', '<=', $date->endOfMonth()->toDateString())
@@ -179,7 +179,7 @@ class BookingController extends Controller
         }
         else {
             // Get working times within the month
-            $workingTimes = WorkingTime::all();
+            $workingTimes = WorkingTime::query();
             $employeeID = null;
         }
 

@@ -5,6 +5,7 @@
  * followed by a period
  *
  * @param  string $string
+ * @param  bool $period
  * @return string
  */
 function firstChar($string, $period)

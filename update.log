@@ -1,0 +1,61 @@
+﻿composer : Loading composer 
+repositories with package 
+information
+At line:1 char:11
++ $output = composer update 
+-W 2>&1; $output | Out-File 
+-Encoding utf8  ...
++           
+~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Loading  
+   compose...age informati   
+ on:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+Updating dependencies
+Your requirements could not 
+be resolved to an 
+installable set of packages.
+
+  Problem 1
+    - Root composer.json 
+requires laravel/dusk ^7.0 
+-> satisfiable by 
+laravel/dusk[v7.0.0, ..., 
+v7.13.0].
+    - laravel/dusk[v7.0.0, 
+..., v7.13.0] require 
+ext-zip * -> it is missing 
+from your system. Install or 
+enable PHP's zip extension.
+
+      Alternatively you can 
+require one of these 
+packages that provide the 
+extension (or parts of it):
+      Keep in mind that the 
+suggestions are automated 
+and may not be valid or safe 
+to use
+      - pecl/zip A zip 
+management extension
+      - badpixxel/paddock 
+Just The Paddock Project
+
+
+To enable extensions, verify 
+that they are enabled in 
+your .ini files:
+    - D:\xampp\php\php.ini
+You can also run `php --ini` 
+in a terminal to see which 
+files are used by PHP in CLI 
+mode.
+Alternatively, you can run 
+Composer with `--ignore-platf
+orm-req=ext-zip` to 
+temporarily ignore these 
+required extensions.
