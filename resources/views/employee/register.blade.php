@@ -10,6 +10,7 @@
 		</div>
 
 		<form class="request__form" method="POST" action="/register/doctor-staff">
+			<p class="text-info">After registration, an admin will review your account and approve login access.</p>
 			{{ csrf_field() }}
 
 			<div class="form-group">

@@ -25,15 +25,8 @@ class DoctorStaffRegistrationController extends Controller
     {
         $this->registrationService->register($request->validated());
 
-        session()->flash('message', 'Account created successfully.');
-
-        // Redirect based on role.
-        $role = auth()->guard('web_employee')->user()->role?->name;
-        if ($role === 'doctor') {
-            return redirect('/doctor');
-        }
-
-        return redirect('/staff');
+        session()->flash('message', 'Account created successfully. Your account is pending approval by admin.');
+        return redirect('/login');
     }
 }
 

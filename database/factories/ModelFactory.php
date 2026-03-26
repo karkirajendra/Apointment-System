@@ -36,6 +36,10 @@ $factory->define(Employee::class, function (Generator $faker) {
         'firstname' => $faker->firstName,
         'lastname' => $faker->lastName,
         'phone' => $faker->phoneNumber,
+        'username' => strtolower($faker->userName) . rand(100, 999),
+        'password' => bcrypt('Password123'),
+        'is_approved' => true,
+        'approved_at' => Carbon::now(),
     ];
 });
 

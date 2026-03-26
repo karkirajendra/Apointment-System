@@ -58,7 +58,15 @@ class SessionController extends Controller
         }
 
         // If sign in as a business owner doesn't work, attempt employee sign in
-        elseif (Auth::guard('web_employee')->attempt(request(['username', 'password']))) {
+        $employee = Employee::where('username', request('username'))->first();
+
+        if ($employee && ! $employee->is_approved) {
+            Log::notice("Pending employee login attempt for username " . request('username'));
+            session()->flash('error', 'Your account is pending admin approval before login.');
+            return back();
+        }
+
+        if (Auth::guard('web_employee')->attempt(array_merge(request(['username', 'password']), ['is_approved' => true]))) {
             Log::info("Employee Login with username " . request('username') . " was successful");
 
             session()->flash('message', 'Login success.');

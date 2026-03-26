@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class DoctorStaffRegistrationService
 {
     /**
-     * Create a doctor or staff member and log them in.
+     * Create a doctor or staff member and mark as pending approval.
      */
     public function register(array $data): Employee
     {
@@ -24,10 +24,8 @@ class DoctorStaffRegistrationService
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
             'role_id' => $role->id,
+            'is_approved' => false,
         ]);
-
-        // Login using the employee guard.
-        Auth::guard('web_employee')->login($employee);
 
         return $employee;
     }

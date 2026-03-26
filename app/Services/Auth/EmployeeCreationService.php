@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Employee;
 use App\Role;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeCreationService
 {
@@ -11,14 +12,18 @@ class EmployeeCreationService
     {
         $staffRole = Role::where('name', 'staff')->firstOrFail();
 
+        $role = Role::where('name', $data['role'] ?? 'staff')->firstOrFail();
+
         return Employee::create([
             'firstname' => $data['firstname'],
             'lastname' => $data['lastname'],
             'title' => $data['title'],
             'phone' => $data['phone'],
-            'role_id' => $staffRole->id,
-            // Admin-created employees aren't given login credentials in this project yet.
-            // Public registration creates doctor/staff logins.
+            'role_id' => $role->id,
+            'username' => $data['username'] ?? null,
+            'password' => isset($data['password']) ? Hash::make($data['password']) : null,
+            'is_approved' => true,
+            'approved_at' => now(),
         ]);
     }
 }

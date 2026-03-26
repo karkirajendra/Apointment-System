@@ -84,6 +84,12 @@ Route::middleware(['auth:web_employee', 'ensure.role:staff'])
 /**
  * Admin handling
  */
+Route::middleware(['auth:web_admin', 'ensure.role:admin'])
+    ->group(function () {
+        Route::post('/admin/employees/{employee}/approve', [EmployeeController::class, 'approve']);
+        Route::post('/admin/employees/{employee}/revoke', [EmployeeController::class, 'revoke']);
+    });
+
 
 // Admin views
 Route::get('/admin', [BusinessOwnerController::class, 'index']);

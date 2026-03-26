@@ -14,6 +14,11 @@ class Employee extends Model implements Authenticatable
 {
 	protected $guarded = [];
 
+	protected $casts = [
+		'is_approved' => 'boolean',
+		'approved_at' => 'datetime',
+	];
+
 	use AuthenticableTrait;
 
 	/**

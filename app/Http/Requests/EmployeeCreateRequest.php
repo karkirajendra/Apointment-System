@@ -14,9 +14,12 @@ class EmployeeCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'firstname' => 'required|min:2|max:32|regex:/^[A-Za-z\\-\\.\\\'\\s]+$/',
-            'lastname' => 'required|min:2|max:32|regex:/^[A-Za-z\\-\\.\\\'\\s]+$/',
-            'title' => 'required|min:2|max:32|regex:/^[A-Za-z\\-\\.\\\'\\s]+$/',
+            'role' => 'required|in:doctor,staff',
+            'firstname' => 'required|min:2|max:32|regex:/^[A-Za-z\-\.\'\s]+$/',
+            'lastname' => 'required|min:2|max:32|regex:/^[A-Za-z\-\.\'\s]+$/',
+            'title' => 'required|min:2|max:32|regex:/^[A-Za-z\-\.\'\s]+$/',
+            'username' => 'required|min:4|max:24|alpha_num|unique:employees,username',
+            'password' => 'required|min:6|max:72|confirmed',
             'phone' => 'required|min:10|max:24|regex:/^[0-9\\-\\+\\.\\s\\(\\)x]+$/',
         ];
     }
