@@ -17,15 +17,15 @@ class Activity extends Model
 		// Run parent Eloquent model construct method before setup
 		parent::__construct($attributes);
 
-		// Set public accessors
-		$this->hour = Time::parse($this->duration)->hour;
-		$this->minute = Time::parse($this->duration)->minute;
+		// Set public accessors — cast to int to satisfy Carbon's strict type requirement
+		$this->hour   = (int) Time::parse($this->duration)->hour;
+		$this->minute = (int) Time::parse($this->duration)->minute;
 	}
 
     /**
 	 * Get bookings from activity
 	 *
-	 * @return \App\Booking
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
 	public function bookings()
 	{

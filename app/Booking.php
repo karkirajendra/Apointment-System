@@ -38,10 +38,10 @@ class Booking extends Model
 			return false;
 		}
 
-	    // Calculate end time
-	    return Time::createFromTime($startTime->hour, $startTime->minute)
-	    	->addHours($duration->hour)
-	    	->addMinutes($duration->minute)
+	    // Calculate end time — cast to int to satisfy Carbon's strict type requirement
+	    return Time::createFromTime((int) $startTime->hour, (int) $startTime->minute)
+	    	->addHours((int) $duration->hour)
+	    	->addMinutes((int) $duration->minute)
 	    	->toTimeString();
 	}
 
@@ -71,7 +71,7 @@ class Booking extends Model
 	/**
 	 * Show all history of bookings
 	 *
-	 * @return App\Booking
+	 * @return \Illuminate\Support\Collection
 	 */
 	public static function allHistory() {
 		// Return past bookings eloquent model
@@ -84,13 +84,13 @@ class Booking extends Model
 	/**
 	 * Show all latest of bookings
 	 *
-	 * @return App\Booking
+	 * @return \Illuminate\Support\Collection
 	 */
 	public static function allLatest($max = null) {
 		$booking = Booking::where('date', '>=', Time::now('Australia/Melbourne')->toDateString());
 
 		if (isset($max)) {
-			$max = Time::now('Australia/Melbourne')->addDays($max);
+			$max = Time::now('Australia/Melbourne')->addDays((int) $max);
 			$booking->where('date', '<=', $max);
 		}
 
@@ -141,7 +141,7 @@ class Booking extends Model
 	/**
 	 * Get employee from bookings
 	 *
-	 * @return \App\Employee
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function employee()
 	{
@@ -151,7 +151,7 @@ class Booking extends Model
 	/**
 	 * Get customer from bookings
 	 *
-	 * @return \App\Customer
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function customer()
 	{
@@ -161,7 +161,7 @@ class Booking extends Model
 	/**
 	 * Get activity from bookings
 	 *
-	 * @return \App\Activity
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function activity()
 	{

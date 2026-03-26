@@ -3,12 +3,16 @@
 @section('content')
 	@if ($bookings->count())
 		<div class="dash__block">
-			<h1 class="dash__header">Summary of Bookings</h1>
-			<h4 class="main_description">Present latest bookings for the next 7 days.</h4>
+			<div class="flex items-center justify-between mb-6">
+				<div>
+					<h1 class="dash__header">Summary of Bookings</h1>
+					<h4 class="main_description">Present latest bookings for the next 7 days.</h4>
+				</div>
+			</div>
 		    <table class="table no-margin">
 		        <tr>
 					<th class="table__id table__right-solid">ID</th>
-					<th class="table__name">Customer</th>
+					<th class="table__name table__left-solid">Customer</th>
 					<th class="table__name">Employee</th>
 					<th class="table__name">Activity</th>
 					<th class="table__time">Start</th>

@@ -94,9 +94,7 @@
 		@yield('content')
 	</div>
 	
-	<footer>
-		LCJJ Development Team &copy; {{ date('Y') }}
-	</footer>
+
 </body>
 
 </html>

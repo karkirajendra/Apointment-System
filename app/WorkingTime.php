@@ -18,7 +18,7 @@ class WorkingTime extends Model
     /**
      * Get the roster
      *
-     * @return WorkingTime
+     * @return \Illuminate\Support\Collection
      */
     public static function getRoster()
     {
@@ -58,7 +58,7 @@ class WorkingTime extends Model
         $workingTimes = $workingTimes->where('date', '>=', Time::now('Australia/Melbourne')->toDateString());
 
         //Final day of working times
-        $max = Time::now('Australia/Melbourne')->addDays($days);
+        $max = Time::now('Australia/Melbourne')->addDays((int) $days);
 
         //Restrict working times to amount of days
         $WorkingTimes = $workingTimes->where('date', '<', $max);
@@ -70,7 +70,7 @@ class WorkingTime extends Model
     /**
 	 * Get employee from working time
      *
-	 * @return Employee
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function employee()
 	{

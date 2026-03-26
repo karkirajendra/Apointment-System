@@ -2,8 +2,12 @@
 
 @section('content')
 <div class="dash__block">
-	<h1 class="dash__header">Appointment Notifications</h1>
-	<h4 class="dash__description">Recent appointment status updates.</h4>
+	<div class="flex items-center justify-between mb-6">
+		<div>
+			<h1 class="dash__header">Appointment Notifications</h1>
+			<h4 class="dash__description">Recent appointment status updates.</h4>
+		</div>
+	</div>
 
 	@include('shared.session_message')
 

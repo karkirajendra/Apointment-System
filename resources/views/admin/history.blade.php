@@ -3,12 +3,16 @@
 @section('content')
 	<div class="dash__block">
 		@if (count($history))
-			<h1 class="dash__header">History of Bookings</h1>
-			<h4 class="main_description">Present older bookings.</h4>
+			<div class="flex items-center justify-between mb-6">
+				<div>
+					<h1 class="dash__header">History of Bookings</h1>
+					<h4 class="main_description">Present older bookings.</h4>
+				</div>
+			</div>
 		    <table class="table no-margin">
 		        <tr>
 					<th class="table__id table__right-solid">ID</th>
-					<th class="table__name">Customer</th>
+					<th class="table__name table__left-solid">Customer</th>
 					<th class="table__name">Employee</th>
 					<th class="table__name">Activity</th>
 					<th class="table__time">Start</th>
