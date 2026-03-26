@@ -18,6 +18,7 @@ class EmployeeCreationService
             'firstname' => $data['firstname'],
             'lastname' => $data['lastname'],
             'title' => $data['title'],
+            'specialty' => $data['specialty'] ?? null,
             'phone' => $data['phone'],
             'role_id' => $role->id,
             'username' => $data['username'] ?? null,

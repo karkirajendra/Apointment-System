@@ -11,31 +11,26 @@
 		@include('shared.loading_message')
 		{{ csrf_field() }}
 		<div class="form-group">
+			<label for="input_specialty">Specialty <span class="request__validate">(Filter Doctors by Specialty)</span></label>
+			<select id="input_specialty" class="form-control request__input" onchange="filterDoctorsBySpecialty(this.value)">
+				<option value="">-- All Specialties --</option>
+				@foreach (Employee::whereNotNull('specialty')->where('specialty', '!=', '')->pluck('specialty')->unique()->sort() as $specialty)
+					<option value="{{ $specialty }}">{{ $specialty }}</option>
+				@endforeach
+			</select>
+		</div>
+		<div class="form-group">
 			<label for="booking_employee">Employee <span class="request__validate">(Title - Full Name - ID)</span></label>
 			<select name="employee_id" id="booking_employee" class="form-control request__input" onchange="showRedirect('.loading', '/admin/bookings/{{ $dateString }}/' + this.value)">
 				@foreach (Employee::all()->sortBy('lastname')->sortBy('firstname')->sortBy('title') as $e)
-					<option value="{{ $e->id }}" {{ old('employee_id') == $e->id || $employeeID == $e->id ? 'selected' : null }}>{{ $e->title . ' - ' . $e->firstname . ' ' . $e->lastname . ' - ' . $e->id }}</option>
+					<option value="{{ $e->id }}" data-specialty="{{ $e->specialty }}" {{ old('employee_id') == $e->id || $employeeID == $e->id ? 'selected' : null }}>{{ $e->title . ' - ' . $e->firstname . ' ' . $e->lastname . ' - ' . $e->id }}</option>
 				@endforeach
 				<option value="" {{ old('employee_id') || $employeeID ? null : 'selected' }}>-- None --</option>
 			</select>
 		</div>
-		<div class="form-group request__flex-container">
-			<div class="request__flex request__flex--left">
-				<label for="booking_month_year">Month & Year <span class="request__validate">(Select to go to month)</span></label>
-			    <select name="month_year" id="booking_month_year" class="form-control request__input" onchange="showRedirect('.loading', '/admin/bookings/' + this.value + '{{ $employeeID ? '/' . $employeeID : null }}')">
-			        @foreach ($months as $month)
-			            <option value="{{ $month->format('m-Y') }}" {{ $date->format('m-Y') == $month->format('m-Y') ? 'selected' : null }}>{{ $month->format('F Y') }}</option>
-			        @endforeach
-			    </select>
-			</div>
-			<div class="request__flex request__flex--right">
-				<label for="booking_day">Day <span class="request__validate"></span></label>
-			    <select name="day" id="booking_day" class="form-control request__input">
-			        @for ($day = 1; $day <= $date->endOfMonth()->day; $day++)
-			            <option value="{{ $day }}" {{ old('day') == $day ? 'selected' : null }}>{{ $day }}</option>
-			        @endfor
-			    </select>
-			</div>
+		<div class="form-group">
+			<label for="booking_date">Date <span class="request__validate"></span></label>
+			<input type="date" name="date" id="booking_date" class="form-control request__input" required value="{{ old('date', request('day') ? $date->format('Y-m-') . str_pad(request('day'), 2, '0', STR_PAD_LEFT) : $date->format('Y-m-d')) }}" min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
 		</div>
 		<div class="form-group">
 			<label for="booking_customer">Customer <span class="request__validate">(Full Name - ID)</span></label>
@@ -158,3 +153,38 @@
 </div>
 
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        window.originalDoctorOptions = Array.from(document.getElementById('booking_employee').options);
+    });
+
+    function filterDoctorsBySpecialty(specialty) {
+        var employeeSelect = document.getElementById('booking_employee');
+        
+        // Remove all options first
+        employeeSelect.innerHTML = '';
+        
+        var hasValidOption = false;
+
+        // Repopulate with logic
+        window.originalDoctorOptions.forEach(function(option) {
+            var optSpecialty = option.getAttribute('data-specialty');
+            // Show option if it's the "None" option (value === ""), or if it matches the chosen specialty, or if no specialty is chosen
+            if (option.value === "" || !specialty || optSpecialty === specialty) {
+                employeeSelect.appendChild(option);
+                // Keep selection if valid
+                if (option.selected) hasValidOption = true;
+            }
+        });
+
+        // If the selected option was hidden, reset selection
+        if (!hasValidOption && employeeSelect.options.length > 0) {
+            employeeSelect.value = employeeSelect.options[0].value;
+            // Optionally dispatch change event if you want URL reload on filter
+            if (employeeSelect.value) {
+                employeeSelect.dispatchEvent(new Event('change'));
+            }
+        }
+    }
+</script>

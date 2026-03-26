@@ -11,10 +11,14 @@
 		{{ csrf_field() }}
 		<div class="form-group">
 			<label for="inputRole">Role</label>
-			<select name="role" id="inputRole" class="form-control request__input">
+			<select name="role" id="inputRole" class="form-control request__input" onchange="document.getElementById('specialtyGroup').style.display = this.value === 'doctor' ? 'block' : 'none';">
 				<option value="staff" {{ old('role') === 'staff' ? 'selected' : '' }}>Staff</option>
 				<option value="doctor" {{ old('role') === 'doctor' ? 'selected' : '' }}>Doctor</option>
 			</select>
+		</div>
+		<div class="form-group" id="specialtyGroup" style="display: {{ old('role') === 'doctor' ? 'block' : 'none' }};">
+			<label for="inputSpecialty">Specialty <span class="request__validate">(e.g. Cardiologist)</span></label>
+			<input name="specialty" type="text" id="inputSpecialty" class="form-control request__input" placeholder="Specialty" value="{{ old('specialty') }}">
 		</div>
 		<div class="form-group">
 			<label for="inputJobTitle">Job Title <span class="request__validate">(e.g. Crew Member, Manager)</span></label>
@@ -58,6 +62,7 @@
 				<th class="table__name table__left-solid">First Name</th>
 				<th class="table__name">Last Name</th>
 				<th class="table__name">Title</th>
+				<th class="table__name">Specialty</th>
 				<th class="table__name">Role</th>
 				<th class="table__name">Username</th>
 				<th class="table__date">Approved</th>
@@ -69,6 +74,7 @@
 					<td class="table__name table__left-solid">{{ $employee->firstname }}</td>
 					<td class="table__name table__left-dotted">{{ $employee->lastname }}</td>
 					<td class="table__name table__left-dotted">{{ $employee->title }}</td>
+					<td class="table__name table__left-dotted">{{ $employee->specialty ?? '–' }}</td>
 					<td class="table__name table__left-dotted">{{ optional($employee->role)->name ?? '–' }}</td>
 					<td class="table__name table__left-dotted">{{ $employee->username ?? '–' }}</td>
 					<td class="table__date table__left-dotted">{{ $employee->is_approved ? 'Yes' : 'Pending' }}</td>

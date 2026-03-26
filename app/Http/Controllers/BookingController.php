@@ -261,8 +261,17 @@ class BookingController extends Controller
             ]);
         }
         else {
+            // Find the activity and guard against null (invalid activity_id)
+            $activity = Activity::find($request->activity_id);
+
+            if (!$activity) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['activity_id' => 'The selected activity does not exist.']);
+            }
+
             $request->merge([
-                'end_time' => Booking::calcEndTime(Activity::find($request->activity_id)->duration, $request->start_time)
+                'end_time' => Booking::calcEndTime($activity->duration, $request->start_time)
             ]);
         }
 

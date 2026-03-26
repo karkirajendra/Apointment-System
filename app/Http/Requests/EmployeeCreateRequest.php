@@ -15,6 +15,7 @@ class EmployeeCreateRequest extends FormRequest
     {
         return [
             'role' => 'required|in:doctor,staff',
+            'specialty' => 'nullable|string|max:100|regex:/^[A-Za-z\-\.\'\s]+$/',
             'firstname' => 'required|min:2|max:32|regex:/^[A-Za-z\-\.\'\s]+$/',
             'lastname' => 'required|min:2|max:32|regex:/^[A-Za-z\-\.\'\s]+$/',
             'title' => 'required|min:2|max:32|regex:/^[A-Za-z\-\.\'\s]+$/',
