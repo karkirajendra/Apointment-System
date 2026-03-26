@@ -1,9 +1,6 @@
 @extends('layouts.master')
 
 @section('content')
-	@if (!BusinessOwner::first())
-		
-	@endif
 	@if (session('error'))
 		<div class="alert alert-danger">
 			{{ session('error') }}

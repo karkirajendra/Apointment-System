@@ -84,6 +84,7 @@ class WorkingTimeController extends Controller
             'business'      => BusinessOwner::first(),
             'employeeID'    => $employeeID,
             'employee'      => $employee,
+            'employees'     => Employee::all(),
             'roster'        => $workingTimes,
             'date'          => $date,
             'dateString'    => $date->format('m-Y'),
@@ -105,6 +106,7 @@ class WorkingTimeController extends Controller
         return view('admin.roster', [
             'business'      => BusinessOwner::first(),
             'roster'        => WorkingTime::all(),
+            'employees'     => Employee::all(),
             'employeeID'    => null,
             'employee'      => null,
             'date'          => $date,

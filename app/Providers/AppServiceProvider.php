@@ -31,12 +31,21 @@ class AppServiceProvider extends ServiceProvider
 		// Additional code to fix php artisan migrate error for (unique key too long on certain systems)
         Schema::defaultStringLength(191);
 
-        // Share $business with all views that use the dashboard layout
+        // Share $business with all views using View Composer
         // Using a View Composer (lazy) so it only runs during actual web requests,
         // not during artisan commands or before DB is ready.
-        View::composer('layouts.dashboard', function ($view) {
+        // Cache the business owner in a request-scoped variable to avoid repeated DB queries
+        $businessOwner = null;
+        $getBusinessOwner = function () use (&$businessOwner) {
+            if ($businessOwner === null) {
+                $businessOwner = \App\BusinessOwner::first();
+            }
+            return $businessOwner;
+        };
+        
+        View::composer(['layouts.dashboard', 'layouts.master'], function ($view) use ($getBusinessOwner) {
             if (! $view->offsetExists('business')) {
-                $view->with('business', \App\BusinessOwner::first());
+                $view->with('business', $getBusinessOwner());
             }
         });
 
@@ -78,6 +87,11 @@ class AppServiceProvider extends ServiceProvider
             $reqStartTime = toTime($request['start_time']);
             $reqEndTime = Booking::calcEndTime($activity->duration, $reqStartTime);
 
+            // If end time could not be calculated, reject the booking
+            if ($reqEndTime === null) {
+                return false;
+            }
+
             // Get bookings of the date
             $bookings = Booking::where($attribute, $value)
                 ->where('date', $request['date'])
@@ -89,11 +103,9 @@ class AppServiceProvider extends ServiceProvider
                 $bookStartTime = $booking->start_time;
                 $bookEndTime = $booking->end_time;
 
-                // If times are conflicting with any exiting booking
-                // Then break and return false
-                if ($reqStartTime >= $bookStartTime && $reqEndTime <= $bookEndTime ||
-                    $reqStartTime < $bookStartTime && $reqEndTime > $bookStartTime ||
-                    $reqStartTime < $bookEndTime && $reqEndTime > $bookEndTime) {
+                // Two time ranges overlap if: reqStart < bookEnd && reqEnd > bookStart
+                // This single condition catches all overlap cases (start overlap, end overlap, complete overlap, contained)
+                if ($reqStartTime < $bookEndTime && $reqEndTime > $bookStartTime) {
                     return false;
                 }
             }
@@ -163,12 +175,17 @@ class AppServiceProvider extends ServiceProvider
             $pStartTime = toTime($request['start_time']);
             $pEndTime = Booking::calcEndTime($activity->duration, $pStartTime);
 
-            // Get bookings of the date
+            // If end time could not be calculated, reject the booking
+            if ($pEndTime === null) {
+                return false;
+            }
+
+            // Get working time for the employee on the given date
             $workingTime = WorkingTime::where($attribute, $value)
                 ->where('date', $request['date'])
                 ->first();
 
-            // If there doesnt exist a working time, then return false
+            // If there doesn't exist a working time, then return false
             if ($workingTime == null) {
                 return false;
             }
@@ -176,7 +193,6 @@ class AppServiceProvider extends ServiceProvider
             // Working time alias
             $wStartTime = $workingTime->start_time;
             $wEndTime = $workingTime->end_time;
-
 
             // Check if booking is in between employee working time
             if ($pStartTime >= $wStartTime and $pEndTime <= $wEndTime) {
@@ -208,13 +224,17 @@ class AppServiceProvider extends ServiceProvider
                 return false;
             }
 
-            // If end time is before start time
-            // Then return false
-            if (Booking::calcEndTime($activity->duration, $startTime) > $startTime) {
-                return true;
+            // Calculate end time
+            $endTime = Booking::calcEndTime($activity->duration, $startTime);
+            
+            // If end time could not be calculated, reject
+            if ($endTime === null) {
+                return false;
             }
 
-            return false;
+            // If end time is after start time, return true (valid)
+            // Otherwise return false
+            return $endTime > $startTime;
         });
     }
 

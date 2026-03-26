@@ -24,18 +24,19 @@ class Booking extends Model
 	/**
 	 * Calculate end time of a booking given its activity duration
 	 *
-	 * @return string
+	 * @param string $pDuration Duration in time format (e.g., "00:30:00")
+	 * @param string $pStartTime Start time in time format (e.g., "14:30")
+	 * @return string|null Time string if successful, null on error
 	 */
 	public static function calcEndTime($pDuration, $pStartTime) {
 		// Set duration
-		$duration = Time::parse($pDuration);
-
 		try {
+			$duration = Time::parse($pDuration);
 			// Set start time
 			$startTime = Time::parse($pStartTime);
 		}
 		catch (\Exception $e) {
-			return false;
+			return null;
 		}
 
 	    // Calculate end time — cast to int to satisfy Carbon's strict type requirement

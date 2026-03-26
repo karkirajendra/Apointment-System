@@ -33,7 +33,7 @@ class Employee extends Model implements Authenticatable
 	 * Get the available times of an employee at a given date
 	 *
 	 * @param  string $date
-	 * @return Array
+	 * @return array|null
 	 */
 	public function availableTimes($date) {
 		// Get working time
@@ -42,11 +42,12 @@ class Employee extends Model implements Authenticatable
         // Get employee bookings
         $bookings = $this->bookings->where('date', $date)->sortBy('start_time');
 
-        if (!$workingTime || !$bookings) {
+        if (!$workingTime || $bookings->isEmpty()) {
             return null;
         }
 
-        // Index the available time array
+        // Initialize available times array
+        $avaTimes = [];
         $i = 0;
 
         // Set available time to working time

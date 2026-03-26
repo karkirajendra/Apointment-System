@@ -12,7 +12,7 @@
 			</div>
 		@endif
 		@include('shared.error_message')
-		@if (!Employee::first())
+		@if (!($employees ?? []) || count($employees) === 0)
 			@include('shared.error_message_custom', [
 				'title' => 'Employees do not exist.',
 				'message' => 'Create an employee <a href="/admin/employees">here</a>.',

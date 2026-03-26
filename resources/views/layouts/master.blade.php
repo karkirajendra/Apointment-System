@@ -2,7 +2,7 @@
 
 <head>
 	<title>
-		@if ($business = BusinessOwner::first())
+		@if ($business ?? null)
 			{{ $business->business_name }} : Booking System
 		@else
 			S & S Hospital
@@ -25,7 +25,7 @@
 
 	<nav class="public-nav">
 		<a class="public-nav__brand" href="/">
-			@if ($business = BusinessOwner::first())
+			@if ($business ?? null)
 				{{ $business->business_name }}
 			@else
 				Booking System
@@ -56,7 +56,6 @@
 	<div class="container">
 		<div class="header">
 			<a class="header__title" href="/">
-				@php $business = BusinessOwner::first(); @endphp
 				@if ($business && $business->logo)
 					<img class="logo logo--large padding-bottom-three" alt="" src="{{ asset('storage/' . $business->logo) }}">
 				@else
