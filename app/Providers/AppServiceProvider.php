@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 
 use App\Activity;
 use App\Booking;
+use App\BusinessOwner;
 use App\WorkingTime;
 use App\BusinessTime;
 
@@ -28,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
     {
 		// Additional code to fix php artisan migrate error for (unique key too long on certain systems)
         Schema::defaultStringLength(191);
+
+        // Share $business with all views that use the dashboard layout
+        View::share('business', BusinessOwner::first());
 
         // Required because `app/Http/Kernel.php` uses `ThrottleRequests::class.':api'` for the `api` middleware group.
         RateLimiter::for('api', function (Request $request) {
