@@ -228,6 +228,8 @@ Route::middleware(['auth:web_admin', 'ensure.role:admin'])->group(function () {
     Route::post('/admin/bookings/{booking}/approve', [AppointmentController::class, 'approveAdmin']);
     Route::post('/admin/bookings/{booking}/complete', [AppointmentController::class, 'completeAdmin']);
     Route::post('/admin/bookings/{booking}/cancel', [AppointmentController::class, 'cancelAdmin']);
+    Route::get('/admin/bookings/{booking}/assign-doctor', [AppointmentController::class, 'assignDoctorForm']);
+    Route::post('/admin/bookings/{booking}/assign-doctor', [AppointmentController::class, 'assignDoctor']);
 });
 
 /**

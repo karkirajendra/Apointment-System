@@ -16,8 +16,24 @@
 			<div class="form-group">
 				<label for="inputRole">Account Type</label>
 				<select name="role" id="inputRole" class="form-control request__input">
-					<option value="doctor" {{ old('role') === 'doctor' ? 'selected' : '' }}>🧑‍⚕️ Doctor / Medical Professional</option>
+					<option value="doctor" {{ old('role', 'doctor') === 'doctor' ? 'selected' : '' }}>🧑‍⚕️ Doctor / Medical Professional</option>
 					<option value="staff" {{ old('role') === 'staff' ? 'selected' : '' }}>🧑‍💼 Hospital Staff / Admin</option>
+				</select>
+			</div>
+
+			{{-- Specialty dropdown — only for Doctors --}}
+			<div class="form-group" id="specialtyGroup" style="display: {{ old('role', 'doctor') !== 'staff' ? 'block' : 'none' }};">
+				<label for="inputSpecialty">Specialty <span class="request__validate">(Select your medical specialty)</span></label>
+				<select name="specialty" id="inputSpecialty" class="form-control request__input">
+					<option value="">-- Select Specialty --</option>
+					@foreach ([
+						'General Practice', 'Cardiology', 'Dermatology', 'Neurology',
+						'Orthopedics', 'Pediatrics', 'Psychiatry', 'Ophthalmology',
+						'Ear, Nose & Throat', 'Gynecology', 'Urology', 'Endocrinology',
+						'Gastroenterology', 'Pulmonology', 'Rheumatology'
+					] as $sp)
+						<option value="{{ $sp }}" {{ old('specialty') === $sp ? 'selected' : '' }}>{{ $sp }}</option>
+					@endforeach
 				</select>
 			</div>
 
@@ -35,8 +51,8 @@
 
 			<div class="request__flex-container">
 				<div class="request__flex request__flex--left form-group">
-					<label for="inputJobTitle">Job Title / Specialty</label>
-					<input name="title" type="text" id="inputJobTitle" class="form-control request__input" placeholder="e.g. Cardiologist" value="{{ old('title') }}">
+					<label for="inputJobTitle">Job Title</label>
+					<input name="title" type="text" id="inputJobTitle" class="form-control request__input" placeholder="e.g. Senior Cardiologist" value="{{ old('title') }}">
 				</div>
 
 				<div class="request__flex request__flex--right form-group">
@@ -68,3 +84,17 @@
 		</form>
 	</div>
 @endsection
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var roleSelect = document.getElementById('inputRole');
+		var specialtyGroup = document.getElementById('specialtyGroup');
+
+		function toggleSpecialty() {
+			specialtyGroup.style.display = (roleSelect.value === 'doctor') ? 'block' : 'none';
+		}
+
+		roleSelect.addEventListener('change', toggleSpecialty);
+		toggleSpecialty(); // Run on load
+	});
+</script>

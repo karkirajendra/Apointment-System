@@ -96,7 +96,8 @@
 			        <tr>
 						<th class="table__id table__right-solid">ID</th>
 						<th class="table__name">Customer</th>
-						<th class="table__name">Employee</th>
+						<th class="table__name">Doctor</th>
+						<th class="table__name">Specialty</th>
 						<th class="table__name">Activity</th>
 						<th class="table__time">Start</th>
 						<th class="table__time">End</th>
@@ -108,21 +109,37 @@
 					@foreach ($bookings as $booking)
 						<tr>
 							<td class="table__id table__right-solid">{{ $booking->id }}</td>
-							<td class="table__name table__right-dotted">{{ $booking->customer->firstname . ' ' . $booking->customer->lastname }}</td>
-							<td class="table__name table__right-dotted">{{ $booking->employee->firstname . ' ' . $booking->employee->lastname }}</td>
-							<td class="table__name table__right-dotted">{{ $booking->activity->name }}</td>
+							<td class="table__name table__right-dotted">{{ optional($booking->customer)->firstname . ' ' . optional($booking->customer)->lastname }}</td>
+							<td class="table__name table__right-dotted">
+								@if($booking->employee)
+									{{ $booking->employee->firstname . ' ' . $booking->employee->lastname }}
+								@else
+									<span class="text-warning">Unassigned</span>
+								@endif
+							</td>
+							<td class="table__name table__right-dotted">
+								{{ $booking->requested_specialty ?? optional($booking->employee)->specialty ?? '–' }}
+							</td>
+							<td class="table__name table__right-dotted">{{ optional($booking->activity)->name }}</td>
 							<td class="table__time table__right-dotted">{{ toTime($booking->start_time, false) }}</td>
 							<td class="table__time table__right-dotted">{{ toTime($booking->end_time, false) }}</td>
-							<td class="table__time table__right-dotted">{{ $booking->activity->duration }}</td>
+							<td class="table__time table__right-dotted">{{ optional($booking->activity)->duration }}</td>
 							<td class="table__date">{{ toDate($booking->date, true) }}</td>
 							<td class="table__date">{{ $booking->status }}</td>
 							<td class="table__date">
-								@if ($booking->status === 'Pending')
+								@if ($booking->status === 'Pending' && !$booking->employee_id)
+									<a href="/admin/bookings/{{ $booking->id }}/assign-doctor" class="btn btn-sm btn-info" style="margin-bottom:4px;">Assign Doctor</a>
+									<form method="POST" action="/admin/bookings/{{ $booking->id }}/cancel" style="display:inline-block;margin-left:4px;">
+										{{ csrf_field() }}
+										<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Cancel this appointment?')">Cancel</button>
+									</form>
+								@elseif ($booking->status === 'Pending')
 									<form method="POST" action="/admin/bookings/{{ $booking->id }}/approve" style="display:inline-block;">
 										{{ csrf_field() }}
 										<button type="submit" class="btn btn-sm btn-success">Approve</button>
 									</form>
-									<form method="POST" action="/admin/bookings/{{ $booking->id }}/cancel" style="display:inline-block;margin-left:6px;">
+									<a href="/admin/bookings/{{ $booking->id }}/assign-doctor" class="btn btn-sm btn-info" style="margin-left:4px;">Reassign</a>
+									<form method="POST" action="/admin/bookings/{{ $booking->id }}/cancel" style="display:inline-block;margin-left:4px;">
 										{{ csrf_field() }}
 										<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Cancel this appointment?')">Cancel</button>
 									</form>
@@ -131,7 +148,8 @@
 										{{ csrf_field() }}
 										<button type="submit" class="btn btn-sm btn-primary">Complete</button>
 									</form>
-									<form method="POST" action="/admin/bookings/{{ $booking->id }}/cancel" style="display:inline-block;margin-left:6px;">
+									<a href="/admin/bookings/{{ $booking->id }}/assign-doctor" class="btn btn-sm btn-info" style="margin-left:4px;">Reassign</a>
+									<form method="POST" action="/admin/bookings/{{ $booking->id }}/cancel" style="display:inline-block;margin-left:4px;">
 										{{ csrf_field() }}
 										<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Cancel this appointment?')">Cancel</button>
 									</form>

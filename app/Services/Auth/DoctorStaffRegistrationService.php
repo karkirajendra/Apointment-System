@@ -17,13 +17,14 @@ class DoctorStaffRegistrationService
         $role = Role::where('name', $data['role'])->firstOrFail();
 
         $employee = Employee::create([
-            'firstname' => ucfirst($data['firstname']),
-            'lastname' => ucfirst($data['lastname']),
-            'title' => $data['title'],
-            'phone' => $data['phone'],
-            'username' => $data['username'],
-            'password' => Hash::make($data['password']),
-            'role_id' => $role->id,
+            'firstname'  => ucfirst($data['firstname']),
+            'lastname'   => ucfirst($data['lastname']),
+            'title'      => $data['title'],
+            'specialty'  => $data['specialty'] ?? null,
+            'phone'      => $data['phone'],
+            'username'   => $data['username'],
+            'password'   => Hash::make($data['password']),
+            'role_id'    => $role->id,
             'is_approved' => false,
         ]);
 

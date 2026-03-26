@@ -59,13 +59,21 @@ class BookingController extends Controller
             'date.after' => 'The :attribute must be before today ' . toDate(getNow(), true) . '.',
         ];
 
-        // Validation rules
+        // Validation rules for admin (employee required)
         $this->rules = [
             'activity_id' => 'required|exists:activities,id|is_end_time_valid',
             'customer_id' => 'required|exists:customers,id|is_on_booking',
             'employee_id' => 'required|exists:employees,id|is_employee_working|is_on_booking',
-            'start_time' => 'required|date_format:H:i',
-            'date' => 'required|date|after:' . getDateNow(),
+            'start_time'  => 'required|date_format:H:i',
+            'date'        => 'required|date|after:' . getDateNow(),
+        ];
+
+        // Validation rules for customer (employee optional)
+        $this->customerRules = [
+            'activity_id'          => 'required|exists:activities,id|is_end_time_valid',
+            'start_time'           => 'required|date_format:H:i',
+            'date'                 => 'required|date|after:' . getDateNow(),
+            'requested_specialty'  => 'nullable|string|max:100',
         ];
 
         // Attributes replace the field name with a more readable name
@@ -231,15 +239,16 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         if (isAdmin()) {
-            $user = 'business owner';
-            $url = '/admin/bookings/' . getMonthYearNow();
-        }
-        else {
+            $user  = 'business owner';
+            $url   = '/admin/bookings/' . getMonthYearNow();
+            $rules = $this->rules;
+        } else {
             $user = 'customer';
-            $url = '/bookings';
+            $url  = '/bookings';
 
             // Use logged in customer ID
             $request->merge(['customer_id' => Auth::id()]);
+            $rules = $this->customerRules;
         }
 
         Log::info("Attempting to create a booking from the {$user}", $request->all());
@@ -250,23 +259,15 @@ class BookingController extends Controller
             $date = Time::createFromDate($monthYear[1], $monthYear[0], $request->day)->toDateString();
             $request->merge(['date' => $date]);
         }
-        else {
-            $date = $request->date;
-        }
 
-        // If end time is requested then do not calculate
+        // Calculate end time from activity duration
         if ($request->end_time) {
-            $request->merge([
-                'end_time' => toTime($request->end_time)
-            ]);
-        }
-        else {
-            // Find the activity and guard against null (invalid activity_id)
+            $request->merge(['end_time' => toTime($request->end_time)]);
+        } else {
             $activity = Activity::find($request->activity_id);
 
             if (!$activity) {
-                return back()
-                    ->withInput()
+                return back()->withInput()
                     ->withErrors(['activity_id' => 'The selected activity does not exist.']);
             }
 
@@ -275,30 +276,37 @@ class BookingController extends Controller
             ]);
         }
 
-        Log::debug("Validating booking input via Customer");
+        Log::debug("Validating booking input via {$user}");
 
         // Validate form
-        $this->validate($request, $this->rules, $this->messages, $this->attributes);
+        $this->validate($request, $rules, $this->messages, $this->attributes);
 
         // Convert start time to proper time format
-        $request->merge([
-            'start_time' => toTime($request->start_time)
-        ]);
+        $request->merge(['start_time' => toTime($request->start_time)]);
+
+        // Build booking data
+        $bookingData = [
+            'customer_id'         => $request->customer_id,
+            'employee_id'         => $request->employee_id ?? null,
+            'activity_id'         => $request->activity_id,
+            'start_time'          => $request->start_time,
+            'end_time'            => $request->end_time,
+            'date'                => $request->date,
+            'requested_specialty' => $request->requested_specialty ?? null,
+        ];
+
+        // Customer bookings with no doctor assigned start as 'Pending'
+        if (!isAdmin() && empty($request->employee_id)) {
+            $bookingData['status'] = 'Pending';
+        }
 
         // Create booking
-        $booking = Booking::create([
-            'customer_id' => $request->customer_id,
-            'employee_id' => $request->employee_id,
-            'activity_id' => $request->activity_id,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'date' => $request->date,
-        ]);
+        $booking = Booking::create($bookingData);
 
         Log::notice("Booking was created by {$user} ID " . Auth::id(), $booking->toArray());
 
         // Session flash
-        session()->flash('message', 'Booking has successfully been created.');
+        session()->flash('message', 'Booking has successfully been created. A doctor will be assigned shortly.');
 
         return redirect($url);
     }

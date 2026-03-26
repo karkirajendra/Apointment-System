@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Appointment;
 
 use App\Booking;
+use App\Employee;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\CancelAppointmentRequest;
 use App\Http\Requests\Appointment\RescheduleAppointmentRequest;
 use App\Http\Requests\Appointment\UpdateAppointmentStatusRequest;
 use App\Services\Appointment\AppointmentService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
@@ -72,6 +74,44 @@ class AppointmentController extends Controller
         $this->service->cancelBooking($booking, $request->input('reason'));
 
         session()->flash('message', 'Appointment cancelled.');
+
+        return redirect()->back();
+    }
+
+    /**
+     * Admin: show assign-doctor form for a pending booking.
+     */
+    public function assignDoctorForm(Request $request, Booking $booking)
+    {
+        // Get doctors filtered by requested specialty if set (unless admin wants all)
+        $doctorsQuery = Employee::where('is_approved', true)
+            ->whereHas('role', function ($q) { $q->where('name', 'doctor'); });
+
+        if ($booking->requested_specialty && !$request->boolean('ignore_specialty')) {
+            $doctorsQuery->where('specialty', $booking->requested_specialty);
+        }
+
+        $doctors = $doctorsQuery->orderBy('lastname')->get();
+
+        return view('admin.assign_doctor', compact('booking', 'doctors'));
+    }
+
+    /**
+     * Admin: assign a doctor to a pending booking.
+     */
+    public function assignDoctor(Request $request, Booking $booking): RedirectResponse
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+        ]);
+
+        $employee = Employee::findOrFail($request->employee_id);
+
+        $booking->employee_id = $employee->id;
+        $booking->status      = 'Approved';
+        $booking->save();
+
+        session()->flash('message', "Dr. {$employee->firstname} {$employee->lastname} has been assigned to booking #{$booking->id}.");
 
         return redirect()->back();
     }
