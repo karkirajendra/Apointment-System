@@ -32,7 +32,13 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         // Share $business with all views that use the dashboard layout
-        View::share('business', BusinessOwner::first());
+        // Using a View Composer (lazy) so it only runs during actual web requests,
+        // not during artisan commands or before DB is ready.
+        View::composer('layouts.dashboard', function ($view) {
+            if (! $view->offsetExists('business')) {
+                $view->with('business', \App\BusinessOwner::first());
+            }
+        });
 
         // Required because `app/Http/Kernel.php` uses `ThrottleRequests::class.':api'` for the `api` middleware group.
         RateLimiter::for('api', function (Request $request) {

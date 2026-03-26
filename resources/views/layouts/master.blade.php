@@ -56,7 +56,8 @@
 	<div class="container">
 		<div class="header">
 			<a class="header__title" href="/">
-				@if ($business = BusinessOwner::first() && $business->logo)
+				@php $business = BusinessOwner::first(); @endphp
+				@if ($business && $business->logo)
 					<img class="logo logo--large padding-bottom-three" alt="" src="{{ asset('storage/' . $business->logo) }}">
 				@else
 					<h1>{{ $business ? $business->business_name : 'S & S Hospital' }}</h1>

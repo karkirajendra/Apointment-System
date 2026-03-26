@@ -1,7 +1,7 @@
 @include('head.html')
 
 <head>
-	<title>{{ $business->business_name }} : Dashboard</title>
+	<title>{{ $business?->business_name ?? 'Dashboard' }} : Dashboard</title>
 	@include('head.meta')
 	@include('head.css')
 	@include('head.js')
@@ -14,13 +14,13 @@
 		<div class="flex items-center justify-between h-full px-6">
 			{{-- Left: Brand / Logo --}}
 			<div class="flex items-center gap-3">
-				@if ($business->logo)
+				@if ($business?->logo)
 					<a href="/admin" title="Back to Business Info" class="flex items-center gap-2">
 						<img class="h-8 w-auto rounded" alt="{{ $business->business_name }}" src="{{ asset('storage/' . $business->logo) }}">
 					</a>
 				@else
 					<a href="/admin" title="Back to Business Info" class="text-lg font-bold text-indigo-600 tracking-tight hover:text-indigo-700 transition-colors">
-						{{ $business->business_name }}
+						{{ $business?->business_name ?? 'Dashboard' }}
 					</a>
 				@endif
 
@@ -49,9 +49,9 @@
 			<div class="flex items-center gap-4">
 				<span class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
 					<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 font-semibold text-xs">
-						{{ strtoupper(substr($business->username, 0, 1)) }}
+						{{ strtoupper(substr($business?->username ?? '?', 0, 1)) }}
 					</span>
-					<span class="font-medium text-gray-700">{{ $business->username }}</span>
+					<span class="font-medium text-gray-700">{{ $business?->username }}</span>
 				</span>
 				<a href="/logout" title="Logout Administrator"
 				   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium text-red-500 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-100 transition-colors">
