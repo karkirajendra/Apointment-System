@@ -1,446 +1,564 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:700|Raleway:300,400,600');
+// ──────────────────────────────────────────────
+// Main App Stylesheet
+// ──────────────────────────────────────────────
 
-// Import Bootstrap first
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap');
+
+// Import Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
-// Then import custom variables, mixins and helpers
+// Custom overrides & utilities
 @import 'variables-custom';
 @import 'mixins';
 @import 'helpers';
-
 @import 'dashboard';
 
+// ── Base ──────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
-	background-color: $body-bg;
+  font-family: $font-family-base;
+  background-color: $body-bg;
+  color: $text-color;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-second;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 hr {
-	border-top: 1px solid $border-color;
+  border: none;
+  border-top: 1px solid $border-color;
+  margin: 1.5rem 0;
 }
 
-footer {
-	margin-top: 50px;
-	margin-bottom: $margin-base;
-	text-align: center;
+a { color: $brand-primary; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+footer:not(.dashboard) {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: $text-muted;
+  font-size: 0.8rem;
 }
 
-input[type="radio"], input[type="checkbox"] {
-	margin: 6px 0 0;
-}
-
+// ── Logo ──────────────────────────────────────
 .logo {
-	height: 200px;
+  height: 80px;
+  object-fit: contain;
 
-	@include m('large') {
-		height: 350px;
-	}
-
-	@include m('small') {
-		height: 50px;
-	}
+  &--large { height: 120px; }
+  &--small { height: 40px; }
 }
 
+// ── Alert / Flash Messages ────────────────────
 .alert {
-	margin-bottom: 15px;
+  border-radius: $border-radius-base;
+  border: none;
+  font-size: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  &-success { background: #dcfce7; color: #166534; }
+  &-danger  { background: #fee2e2; color: #991b1b; }
+  &-info    { background: #dbeafe; color: #1e40af; }
+  &-warning { background: #fef9c3; color: #854d0e; }
+
+  .close {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    &:hover { opacity: 1; }
+  }
 }
 
+// ── Buttons ───────────────────────────────────
 .btn {
-	font-family: $font-family-second;
+  font-family: $font-family-base;
+  font-weight: 500;
+  border-radius: $border-radius-base;
+  font-size: 0.9rem;
+  padding: 0.55rem 1.2rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 
-	@include m('margin-top') {
-		margin-top: 20px;
-	}
+  &-primary {
+    background: $brand-primary;
+    color: #fff;
+    &:hover { background: darken($brand-primary, 8%); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,110,253,0.35); }
+    &:active { transform: translateY(0); }
+  }
+
+  &-success {
+    background: $brand-success;
+    color: #fff;
+    &:hover { background: darken($brand-success, 8%); color: #fff; }
+  }
+
+  &-danger {
+    background: $brand-danger;
+    color: #fff;
+    &:hover { background: darken($brand-danger, 8%); color: #fff; }
+  }
+
+  &-secondary {
+    background: #e2e8f0;
+    color: #374151;
+    &:hover { background: darken(#e2e8f0, 6%); color: #1e293b; }
+  }
+
+  &-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: $border-radius-base;
+  }
+
+  &-sm {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  &-block {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  &--margin-top { margin-top: 1rem; }
 }
 
-.btn-lg, .btn-group-lg > .btn {
-	border-radius: $border-radius-base;
-}
-
-.loading {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	display: none;
-
-	@include e('message') {
-		color: $gray-dark;
-		text-align: center;
-		position: absolute;
-		z-index: 200;
-		opacity: 1.0;
-		left: 0;
-		right: 0;
-		margin: 50px auto;
-		font-family: $font-family-second;
-		font-weight: 800;
-	}
-
-	@include e('icon') {
-		font-size: 70px;
-	}
-
-	@include e('bg') {
-		background-color: $body-bg;
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 100;
-		opacity: 0.6;
-	}
-}
-
-.block {
-	background: white;
-	padding: 15px;
-	border: 1px solid $border-color;
-	box-shadow: 0 2px 4px #d2d2d2;
-
-	@include m('no-padding') {
-		padding: 0px !important;
-	}
-}
-
+// ── Form Controls ─────────────────────────────
 .form-group {
-	margin-bottom: $margin-base;
+  margin-bottom: 1.25rem;
 }
 
-.no-margin {
-	margin: 0;
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.4rem;
+  display: block;
 }
 
-.text-center {
-	text-align: center;
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9rem;
+  font-family: $font-family-base;
+  color: #1e293b;
+  background-color: #fff;
+  border: 1.5px solid $input-border;
+  border-radius: $border-radius-base;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus {
+    border-color: $brand-primary;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+
+  &::placeholder { color: #9ca3af; }
 }
 
-// Calendar
-
-.calendar {
-	border: 1px solid $border-color;
-
-	tbody > tr > td {
-		padding: 8px 8px 0 8px;
-	}
-
-	@include e('week') {
-		border-right: 1px solid $gray-light;
-		min-width: 60px;
-
-		@include m('label') {
-			padding-top: 60px !important;
-			font-family: $font-family-second;
-			font-weight: bold;
-		}
-	}
-
-	@include e('day') {
-		color: $gray;
-
-		@include m('block') {
-			background: white;
-			position: relative;
-			height: 150px;
-			min-width: 110px;
-			border: 1px solid $border-color;
-		}
-
-		@include m('now') {
-			background-color: $brand-lighter !important;
-		}
-
-		@include m('disabled') {
-			background-color: $gray-lightest !important;
-		}
-	}
-
-	@include e('day-label') {
-		position: absolute;
-		top: 6px;
-		right: 10px;
-		color: $gray-lighter;
-	}
+select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.2rem;
 }
 
+// ── Block / Card ──────────────────────────────
+.block {
+  background: #fff;
+  border-radius: $border-radius-large;
+  border: 1px solid $border-color;
+  padding: 2rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+
+  &--no-padding { padding: 0 !important; }
+}
+
+// ── Tables ────────────────────────────────────
 .table {
-	border: 1px solid $border-color;
-	box-shadow: 0 2px 4px #d2d2d2;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-large;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  background: #fff;
 
-	th {
-		font-family: $font-family-second;
-		font-size: 18px;
-		text-align: center;
-		border-bottom: 1px solid $border-color;
-		background: white;
-	}
+  th {
+    font-family: $font-family-base;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid $border-color;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
 
-	td {
-		text-align: center;
-		font-size: 16px;
-		border-bottom: 1px solid $border-color;
-		background-color: white;
-	}
+  td {
+    font-size: 0.9rem;
+    color: $text-color;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    background-color: #fff;
+  }
 
-	thead > tr > th, thead > tr > td, tbody > tr > th, tbody > tr > td, tfoot > tr > th, tfoot > tr > td {
-		border-top: none;
-	}
+  tbody tr {
+    transition: background 0.15s;
+    &:hover td { background: #f8fafc; }
+    &:last-child td { border-bottom: none; }
+  }
 
-	.item {
-		text-align: left;
+  // Column size helpers
+  &__id          { width: 60px; }
+  &__name        { min-width: 120px; }
+  &__time        { min-width: 90px; max-width: 140px; }
+  &__date        { min-width: 80px; max-width: 130px; }
+  &__description { min-width: 130px; }
+  &__day         { min-width: 130px; max-width: 180px; vertical-align: middle !important; }
 
-		@include e('block') {
-			padding: 4px;
-			background-color: $brand-primary;
-			border-radius: $border-radius-base;
-			color: $white;
-			position: relative;
-			min-width: 110px;
-			margin-bottom: $margin-base;
+  // Border divider helpers
+  &__right-solid  { border-right: 1px solid $border-color; }
+  &__right-dotted { border-right: 1px dotted $border-color; }
+  &__right-dashed { border-right: 1px dashed $border-color; }
+  &__left-solid   { border-left: 1px solid $border-color; }
+  &__left-dotted  { border-left: 1px dotted $border-color; }
+  &__left-dashed  { border-left: 1px dashed $border-color; }
 
-			@include m('no-margin') {
-				margin-bottom: 0;
-			}
+  &--margin-top { margin-top: 1rem; }
 
-			@include m('calendar') {
-				margin-right: 25px;
-			}
-
-			@include m('padding') {
-				padding: 4px 24px 4px 4px;
-			}
-		}
-
-		@include e('text') {
-			margin-bottom: 0;
-		}
-
-		@include e('time') {
-			margin-bottom: 0;
-			font-family: $font-family-second;
-		}
-
-		@include e('name') {
-			font-family: $font-family-base;
-		}
-
-		@include e('message') {
-			padding-left: 4px;
-		}
-
-		@include e('edit') {
-			position: absolute;
-			top: 6px;
-			right: 8px;
-			color: $brand-light;
-			font-size: 14px;
-		}
-
-		@include e('remove') {
-			position: absolute;
-			top: 6px;
-			right: 28px;
-			color: $brand-light;
-			font-size: 14px;
-		}
-
-		@include e-hover('edit') {
-			color: white;
-		}
-
-		@include e-hover('remove') {
-			color: white;
-		}
-	}
-
-	// General modifiers
-
-	@include m('margin-top') {
-		margin-top: $margin-base;
-	}
-
-	@include e('right-solid') {
-		border-right: $dash-table-border solid $border-color;
-	}
-
-	@include e('right-dotted') {
-		border-right: $dash-table-border dotted $border-color;
-	}
-
-	@include e('right-dashed') {
-		border-right: $dash-table-border dashed $border-color;
-	}
-
-	@include e('left-solid') {
-		border-left: $dash-table-border solid $border-color;
-	}
-
-	@include e('left-dotted') {
-		border-left: $dash-table-border dotted $border-color;
-	}
-
-	@include e('left-dashed') {
-		border-left: $dash-table-border dashed $border-color;
-	}
-
-	@include e-last-child('right-solid') {
-		border-right: none;
-	}
-
-	@include e-last-child('right-dotted') {
-		border-right: none;
-	}
-
-	@include e-last-child('right-dashed') {
-		border-right: none;
-	}
-
-	@include e-first-child('left-solid') {
-		border-left: none;
-	}
-
-	@include e-first-child('left-dotted') {
-		border-left: none;
-	}
-
-	@include e-first-child('left-dashed') {
-		border-left: none;
-	}
-
-	@include e('id') {
-		width: 80px;
-	}
-
-	@include e('description') {
-		min-width: 120px;
-	}
-
-	@include e('time') {
-		min-width: 80px;
-		max-width: 150px;
-	}
-
-	@include e('name') {
-		min-width: 100px;
-	}
-
-	@include e('day') {
-		min-width: 140px;
-		max-width: 200px;
-		vertical-align: middle !important;
-	}
-
-	@include e('date') {
-		min-width: 60px;
-		max-width: 120px;
-	}
+  &.no-margin { margin: 0; }
 }
 
-.table > thead > tr > th {
-	border-bottom: none;
+// ── Status Badges ─────────────────────────────
+.badge-status {
+  display: inline-block;
+  padding: 0.25em 0.7em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+
+  &--pending   { background: #fef9c3; color: #854d0e; }
+  &--approved  { background: #dcfce7; color: #166534; }
+  &--completed { background: #dbeafe; color: #1e40af; }
+  &--cancelled { background: #fee2e2; color: #991b1b; }
 }
 
-.user {
-	padding-top: 20px;
-
-	a {
-		border-left: 1px solid $gray-light;
-		padding-left: $padding-base;
-		margin-left: $margin-min;
-	}
-}
-
-.nav-pills {
-	padding-top: $padding-base;
-}
-
-.nav-pills > li > a:hover, .nav-pills > li > a:focus {
-	background-color: $brand-secondary;
-	color: $white;
-}
-
+// ── Request form namespace ─────────────────────
 .request {
-	position: relative;
+  position: relative;
 
-	@include e('input') {
-		margin-bottom: 0;
-	}
+  &__input  { margin-bottom: 0; }
 
-	@include e('button') {
-		margin-bottom: $margin-base;
+  &__validate {
+    color: #9ca3af;
+    font-weight: 400;
+    font-size: 0.8rem;
+    margin-left: 0.2rem;
+  }
 
-		@include m('dropdown') {
-			width: 100%;
-			background-color: $white;
-			border: 1px solid $input-border;
-		}
-	}
+  &__flex-container {
+    display: flex;
+    gap: 1rem;
+  }
 
-	@include e('validate') {
-		color: $gray-lighter;
-	}
+  &__flex {
+    flex: 1;
 
-	@include e('flex-container') {
-		display: flex;
-	}
-
-	@include e('flex') {
-		flex: 1 1 100px;
-
-		@include m('left') {
-			margin-right: $margin-base;
-		}
-
-		@include m('right') {
-			margin-left: $margin-base;
-		}
-	}
+    &--left  { margin-right: 0; }
+    &--right { margin-left: 0; }
+  }
 }
 
+// ── Public Master Layout: Navbar ──────────────
+.public-nav {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  padding: 0 1.5rem;
+  height: $navbar-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  &__brand {
+    font-family: $font-family-second;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before { content: '🏥'; font-size: 1.3rem; }
+    &:hover { color: #94a3b8; text-decoration: none; }
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      color: #94a3b8;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+
+      &:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    }
+
+    li.active a { color: #fff; background: rgba(255,255,255,0.12); }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+
+    a {
+      color: #ef4444;
+      background: rgba(239,68,68,0.12);
+      padding: 0.35rem 0.85rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+
+      &:hover { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    }
+  }
+}
+
+// ── Public Header Block ───────────────────────
 .header {
-	text-align: center;
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem;
 
-	@include e('title') {
-		font-family: $font-family-second;
-	}
+  &__title {
+    text-decoration: none;
+    &:hover, &:visited, &:focus { text-decoration: none; }
+  }
 
-	@include e-hover('title') {
-		text-decoration: none;
-	}
+  h1 {
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+    margin-bottom: 0;
+    color: #1e293b;
+  }
 
-	@include e-visited('title') {
-		text-decoration: none;
-	}
-
-	@include e-focus('title') {
-		text-decoration: none;
-	}
-
-	@include e('subtitle') {
-		margin-top: 0px;
-		margin-bottom: $margin-x-large;
-		color: $gray-light;
-	}
+  &__subtitle {
+    color: $text-muted;
+    font-size: 0.95rem;
+    font-weight: 400;
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+  }
 }
 
-/* Extra small devices (phones, less than 768px) */
-/* No media query since this is the default in Bootstrap */
+// ── Loading Overlay ───────────────────────────
+.loading {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
+  z-index: 50;
 
-/* Small devices (tablets, 768px and up) */
-@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+  &__message {
+    color: $gray-dark;
+    text-align: center;
+    position: absolute;
+    z-index: 200;
+    left: 0; right: 0;
+    margin: 50px auto;
+    font-family: $font-family-second;
+    font-weight: 800;
+  }
 
+  &__bg {
+    background-color: rgba(255,255,255,0.7);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 100;
+  }
 }
 
-/* Medium devices (desktops, 992px and up) */
-@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-	.container {
-		width: 1100px;
-	}
+// ── Calendar ─────────────────────────────────
+.calendar {
+  border: 1px solid $border-color;
+  border-radius: $border-radius-base;
+  overflow: hidden;
+
+  tbody > tr > td { padding: 8px 8px 0 8px; }
+
+  &__week {
+    border-right: 1px solid $gray-lighter;
+    min-width: 60px;
+
+    &--label {
+      padding-top: 60px !important;
+      font-family: $font-family-second;
+      font-weight: bold;
+    }
+  }
+
+  &__day {
+    color: $gray;
+
+    &--block {
+      background: white;
+      position: relative;
+      height: 150px;
+      min-width: 110px;
+      border: 1px solid $border-color;
+    }
+
+    &--now    { background-color: #dbeafe !important; }
+    &--disabled { background-color: $gray-lightest !important; }
+  }
+
+  &__day-label {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    color: $gray-lighter;
+    font-size: 0.75rem;
+  }
 }
 
-/* Large devices (large desktops, 1200px and up) */
-@media (min-width: $screen-lg-min) {
+// ── Item Blocks (calendar events) ─────────────
+.item {
+  text-align: left;
 
+  &__block {
+    padding: 4px;
+    background-color: $brand-primary;
+    border-radius: $border-radius-base;
+    color: #fff;
+    position: relative;
+    min-width: 110px;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+
+    &--no-margin    { margin-bottom: 0; }
+    &--calendar     { margin-right: 25px; }
+    &--padding      { padding: 4px 24px 4px 4px; }
+  }
+
+  &__text, &__time { margin-bottom: 0; }
+
+  &__edit, &__remove {
+    position: absolute;
+    top: 6px;
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover { color: #fff; }
+  }
+
+  &__edit   { right: 8px; }
+  &__remove { right: 26px; }
+}
+
+// ── Utility Classes ───────────────────────────
+.no-margin  { margin: 0; }
+.text-center { text-align: center; }
+.text-muted  { color: $text-muted !important; }
+
+.margin-top-two { margin-top: 2rem; }
+.padding-top-three { padding-top: 1.5rem; }
+.padding-bottom-three { padding-bottom: 1.5rem; }
+
+.pull-left  { float: left; }
+.pull-right { float: right; }
+.clearfix::after { content: ''; display: table; clear: both; }
+
+// ── Nav Pills (tabs on booking page) ─────────
+.nav-pills {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  border-bottom: 2px solid $border-color;
+
+  > li {
+    > a {
+      display: block;
+      padding: 0.55rem 1.1rem;
+      color: $text-muted;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-radius: 0.375rem 0.375rem 0 0;
+      text-decoration: none;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+
+      &:hover { color: $brand-primary; background: rgba(13,110,253,0.06); }
+    }
+
+    &.active > a {
+      color: $brand-primary;
+      border-bottom-color: $brand-primary;
+      background: rgba(13,110,253,0.06);
+    }
+  }
+}
+
+// ── Tab content ──────────────────────────────
+.tab-content > .tab-pane       { display: none; }
+.tab-content > .tab-pane.active { display: block; }
+
+// ── Responsive ───────────────────────────────
+@media (max-width: #{$screen-sm-max}) {
+  .request__flex-container { flex-direction: column; }
+  .table { display: block; overflow-x: auto; }
 }
