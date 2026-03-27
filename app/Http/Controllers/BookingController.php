@@ -30,7 +30,7 @@ class BookingController extends Controller
                 'showCustomer',
             ]
         ]);
-        $this->middleware('auth:web_admin', [
+        $this->middleware('auth:web_admin,web_employee', [
             'only' => [
                 'indexAdmin',
                 'showAdmin',
@@ -150,7 +150,9 @@ class BookingController extends Controller
             ->where('date', '>=', $date->startOfMonth()->toDateString())
             ->get();
 
-        return view('admin.bookings', [
+        $viewName = Auth::guard('web_employee')->check() ? 'employee.staff_bookings' : 'admin.bookings';
+
+        return view($viewName, [
             'bookings'      => $bookings,
             'business'      => BusinessOwner::first(),
             'employeeID'    => $employeeID,
@@ -218,7 +220,9 @@ class BookingController extends Controller
             ->get()
             ->sortBy('date');
 
-        return view('admin.bookings', [
+        $viewName = Auth::guard('web_employee')->check() ? 'employee.staff_bookings' : 'admin.bookings';
+
+        return view($viewName, [
             'business'      => BusinessOwner::first(),
             'bookings'      => $bookings,
             'employeeID'    => null,
@@ -238,9 +242,10 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        if (isAdmin()) {
-            $user  = 'business owner';
-            $url   = '/admin/bookings/' . getMonthYearNow();
+        if (isAdmin() || Auth::guard('web_employee')->check()) {
+            $user  = 'administrative user';
+            $urlPrefix = Auth::guard('web_employee')->check() ? '/staff' : '/admin';
+            $url   = $urlPrefix . '/bookings/' . getMonthYearNow();
             $rules = $this->rules;
         } else {
             $user = 'customer';
@@ -296,7 +301,7 @@ class BookingController extends Controller
         ];
 
         // Customer bookings with no doctor assigned start as 'Pending'
-        if (!isAdmin() && empty($request->employee_id)) {
+        if (!isAdmin() && !Auth::guard('web_employee')->check() && empty($request->employee_id)) {
             $bookingData['status'] = 'Pending';
         }
 

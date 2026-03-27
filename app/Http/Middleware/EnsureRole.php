@@ -11,9 +11,9 @@ class EnsureRole
     /**
      * Role names are: admin, doctor, patient, staff
      */
-    public function handle(Request $request, Closure $next, string $role)
+    public function handle(Request $request, Closure $next, string ...$roles)
     {
-        $role = strtolower($role);
+        $roles = array_map('strtolower', $roles);
 
         $roleName = null;
 
@@ -28,7 +28,7 @@ class EnsureRole
             $roleName = strtolower(optional($user?->role)->name);
         }
 
-        if ($roleName === $role) {
+        if (in_array($roleName, $roles)) {
             return $next($request);
         }
 

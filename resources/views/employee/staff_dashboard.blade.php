@@ -21,9 +21,9 @@
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <h3 class="text-sm uppercase tracking-wide text-yellow-700">Quick actions</h3>
             <ul class="mt-2 space-y-1 text-sm text-yellow-900">
-                <li><a class="underline" href="/bookings">View all bookings</a></li>
-                <li><a class="underline" href="/bookings/{{ toMonthYear(now()) }}/new">Create booking</a></li>
-                <li><a class="underline" href="/dashboard">Go to dashboard redirect</a></li>
+                <li><a class="underline" href="/staff/bookings">View all bookings</a></li>
+                <li><a class="underline" href="/staff/bookings/{{ toMonthYear(now()) }}">Create booking</a></li>
+                <li><a class="underline" href="/dashboard">Go to dashboard</a></li>
             </ul>
         </div>
     </div>
@@ -67,7 +67,7 @@
         <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
             <h3 class="font-semibold">Staff Resources</h3>
             <p class="text-sm text-indigo-700 mt-1">Your daily tasks and workflows are just one click away.</p>
-            <a class="inline-block mt-3 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" href="/bookings">Manage Bookings</a>
+            <a class="inline-block mt-3 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" href="/staff/bookings">Manage Bookings</a>
         </div>
         <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <h3 class="font-semibold">Help</h3>

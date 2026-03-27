@@ -5,9 +5,9 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-window.Laravel = { csrfToken: $('meta[name=csrf-token]').attr("content") };
-
 require('./bootstrap');
+
+window.Laravel = { csrfToken: $('meta[name=csrf-token]').attr("content") };
 require('./maskedinput')
 require('./anchormethod')
 

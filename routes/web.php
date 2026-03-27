@@ -118,14 +118,25 @@ Route::post('/admin/roster', [WorkingTimeController::class, 'store']);
 Route::post('/admin/roster/{month_year}', [WorkingTimeController::class, 'store']);
 Route::delete('/admin/roster/{wTime}', [WorkingTimeController::class, 'destroy']);
 
-// Booking
-Route::get('/admin/summary', [BookingController::class, 'summary']);
-Route::get('/admin/history', [BookingController::class, 'history']);
-Route::get('/admin/bookings', function () { return redirect('/admin/bookings/' . toMonthYear(getNow())); });
-Route::get('/admin/bookings/{month_year}', [BookingController::class, 'indexAdmin']);
-Route::get('/admin/bookings/{month_year}/{employee_id}', [BookingController::class, 'showAdmin']);
-Route::post('/admin/bookings/{month_year}', [BookingController::class, 'store']);
-Route::post('/admin/bookings', [BookingController::class, 'store']);
+// Admin Bookings
+Route::middleware(['auth:web_admin', 'ensure.role:admin'])->group(function () {
+    Route::get('/admin/summary', [BookingController::class, 'summary']);
+    Route::get('/admin/history', [BookingController::class, 'history']);
+    Route::get('/admin/bookings', function () { return redirect('/admin/bookings/' . toMonthYear(getNow())); });
+    Route::get('/admin/bookings/{month_year}', [BookingController::class, 'indexAdmin']);
+    Route::get('/admin/bookings/{month_year}/{employee_id}', [BookingController::class, 'showAdmin']);
+    Route::post('/admin/bookings/{month_year}', [BookingController::class, 'store']);
+    Route::post('/admin/bookings', [BookingController::class, 'store']);
+});
+
+// Staff Bookings
+Route::middleware(['auth:web_employee', 'ensure.role:staff'])->group(function () {
+    Route::get('/staff/bookings', function () { return redirect('/staff/bookings/' . toMonthYear(getNow())); });
+    Route::get('/staff/bookings/{month_year}', [BookingController::class, 'indexAdmin']);
+    Route::get('/staff/bookings/{month_year}/{employee_id}', [BookingController::class, 'showAdmin']);
+    Route::post('/staff/bookings/{month_year}', [BookingController::class, 'store']);
+    Route::post('/staff/bookings', [BookingController::class, 'store']);
+});
 
 // Employee
 Route::post('/admin/employees', [EmployeeController::class, 'store']);
@@ -224,12 +235,20 @@ Route::middleware(['auth:web_user'])->group(function () {
 /**
  * Appointment actions — Admin
  */
-Route::middleware(['auth:web_admin', 'ensure.role:admin'])->group(function () {
+Route::middleware(['auth:web_admin,web_employee', 'ensure.role:admin,staff'])->group(function () {
+    // Admin specific routes
     Route::post('/admin/bookings/{booking}/approve', [AppointmentController::class, 'approveAdmin']);
     Route::post('/admin/bookings/{booking}/complete', [AppointmentController::class, 'completeAdmin']);
     Route::post('/admin/bookings/{booking}/cancel', [AppointmentController::class, 'cancelAdmin']);
     Route::get('/admin/bookings/{booking}/assign-doctor', [AppointmentController::class, 'assignDoctorForm']);
     Route::post('/admin/bookings/{booking}/assign-doctor', [AppointmentController::class, 'assignDoctor']);
+
+    // Staff specific routes
+    Route::post('/staff/bookings/{booking}/approve', [AppointmentController::class, 'approveAdmin']);
+    Route::post('/staff/bookings/{booking}/complete', [AppointmentController::class, 'completeAdmin']);
+    Route::post('/staff/bookings/{booking}/cancel', [AppointmentController::class, 'cancelAdmin']);
+    Route::get('/staff/bookings/{booking}/assign-doctor', [AppointmentController::class, 'assignDoctorForm']);
+    Route::post('/staff/bookings/{booking}/assign-doctor', [AppointmentController::class, 'assignDoctor']);
 });
 
 /**
