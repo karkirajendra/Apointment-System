@@ -47,7 +47,7 @@ class ActivityController extends Controller
         // Validation error messages
         $messages = [
             'name.regex' => 'The :attribute is invalid, do not use special characters.',
-            'duration.date_format' => 'The :attribute field must be in the correct time format (e.g. 4:00 or 16:30).',
+            'duration.date_format' => 'The :attribute field must be in the correct time format (e.g. 00:30 or 01:00).',
             'duration.after' => 'The :attribute field cannot be zero.',
         ];
 
@@ -64,6 +64,11 @@ class ActivityController extends Controller
         ];
 
         Log::debug("Validating Activity input");
+
+        // Auto pad duration (e.g. 1:30 -> 01:30)
+        if ($request->has('duration') && preg_match('/^\d:\d{2}$/', $request->duration)) {
+            $request->merge(['duration' => '0' . $request->duration]);
+        }
 
         // Validate form
         $this->validate($request, $rules, $messages, $attributes);
@@ -110,7 +115,7 @@ class ActivityController extends Controller
         // Validation error messages
         $messages = [
             'name.alpha_num' => 'The :attribute is invalid, do not use special characters except "." and "-".',
-            'duration.date_format' => 'The :attribute field must be in the correct time format (e.g. 4:00 or 16:30).',
+            'duration.date_format' => 'The :attribute field must be in the correct time format (e.g. 00:30 or 01:00).',
         ];
 
         // Validation rules
@@ -126,6 +131,11 @@ class ActivityController extends Controller
         ];
 
         Log::debug("Validating Activity input");
+
+        // Auto pad duration (e.g. 1:30 -> 01:30)
+        if ($request->has('duration') && preg_match('/^\d:\d{2}$/', $request->duration)) {
+            $request->merge(['duration' => '0' . $request->duration]);
+        }
 
         // Validate form
         $this->validate($request, $rules, $messages, $attributes);

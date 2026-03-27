@@ -17,8 +17,8 @@
 				<input name="description" type="text" id="activity_description" class="form-control request__input" placeholder="Description" value="{{ old('description') }}" autofocus>
 			</div>
 			<div class="form-group">
-				<label for="activity_duration">Duration <span class="request__validate">(24 hour format)</span></label>
-				<input name="duration" type="text" id="activity_duration" class="form-control request__input" placeholder="hh:mm" value="{{ old('duration') }}" masked-time>
+				<label for="activity_duration">Duration <span class="request__validate">(HH:MM, e.g. 01:30)</span></label>
+				<input name="duration" type="text" id="activity_duration" class="form-control request__input" placeholder="00:00" value="{{ old('duration') }}" masked-time>
 			</div>
 			<button class="btn btn-lg btn-primary btn-block btn--margin-top">Create Activity</button>
 		</form>
