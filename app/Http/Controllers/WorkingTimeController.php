@@ -37,7 +37,7 @@ class WorkingTimeController extends Controller
             'start_time.date_format' => 'The :attribute field must be in the correct time format.',
             'end_time.date_format' => 'The :attribute field must be in the correct time format.',
             'date.unique' => 'The employee can only have one working time per day.',
-            'date.after' => 'The :attribute must be before today ' . toDate(getNow(), true) . '.',
+            'date.after_or_equal' => 'The :attribute must be today or a future date.',
             'date.is_business_open' => 'The :attribute field be within open business times.',
         ];
 
@@ -53,7 +53,7 @@ class WorkingTimeController extends Controller
             'end_time' => 'required|after:start_time|date_format:H:i',
 
             // Date must be unique where employee ID is unique
-            'date' => 'required|date|after:' . getDateNow() . '|is_business_open',
+            'date' => 'required|date|after_or_equal:' . getDateNow() . '|is_business_open',
         ];
 
         // Attributes replace the field name with a more readable name

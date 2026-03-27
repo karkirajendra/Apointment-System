@@ -19,7 +19,7 @@ class WorkingTimeTest extends TestCase
     /**
      * Calls functions before executing tests
      */
-    public function setUp()
+    public function setUp(): void
     {
         // Continue to run the rest of the test
         parent::setUp();
@@ -268,7 +268,7 @@ class WorkingTimeTest extends TestCase
 
         // Check response for an error message
         $response->assertJsonFragment([
-            'The date must be before today ' . Time::now()->format('d/m/Y') . '.'
+            'The date must be today or a future date.'
         ]);
     }
 

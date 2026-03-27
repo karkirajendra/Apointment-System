@@ -56,7 +56,7 @@ class BookingController extends Controller
             'employee_id.is_on_booking' => 'The :attribute is already working on another booking at that time.',
             'activity_id.exists' => 'The :attribute does not exist.',
             'activity_id.is_end_time_valid' => 'The :attribute duration added on start time is invalid. Please add a start time that does not go to the next day.',
-            'date.after' => 'The :attribute must be before today ' . toDate(getNow(), true) . '.',
+            'date.after_or_equal' => 'The :attribute must be today or a future date.',
         ];
 
         // Validation rules for admin (employee required)
@@ -65,14 +65,14 @@ class BookingController extends Controller
             'customer_id' => 'required|exists:customers,id|is_on_booking',
             'employee_id' => 'required|exists:employees,id|is_employee_working|is_on_booking',
             'start_time'  => 'required|date_format:H:i',
-            'date'        => 'required|date|after:' . getDateNow(),
+            'date'        => 'required|date|after_or_equal:' . getDateNow(),
         ];
 
         // Validation rules for customer (employee optional)
         $this->customerRules = [
             'activity_id'          => 'required|exists:activities,id|is_end_time_valid',
             'start_time'           => 'required|date_format:H:i',
-            'date'                 => 'required|date|after:' . getDateNow(),
+            'date'                 => 'required|date|after_or_equal:' . getDateNow(),
             'requested_specialty'  => 'nullable|string|max:100',
         ];
 
