@@ -29,7 +29,7 @@ class Booking extends Model
 	 * @return string|null Time string if successful, null on error
 	 */
 	public static function calcEndTime($pDuration, $pStartTime) {
-		// Set duration
+		// Set durationfdfffdfdffdfdffd
 		try {
 			$duration = Time::parse($pDuration);
 			// Set start time
@@ -38,6 +38,7 @@ class Booking extends Model
 		catch (\Exception $e) {
 			return null;
 		}
+		
 
 	    // Calculate end time — cast to int to satisfy Carbon's strict type requirement
 	    return Time::createFromTime((int) $startTime->hour, (int) $startTime->minute)
@@ -82,7 +83,7 @@ class Booking extends Model
 			->sortByDESC('date');
 	}
 
-	/**
+	/**fdfdfdfdf
 	 * Show all latest of bookings
 	 *
 	 * @return \Illuminate\Support\Collection
